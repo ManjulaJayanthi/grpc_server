@@ -6,12 +6,12 @@ use axum::{
     Json,
 };
 
-use super::{blog_model::BlogRuntimeMockResponse, blog_route::blog::BlogRuntimeResponse};
+use super::blog_model::BlogRuntimeMockResponse;
 
 #[derive(Debug)]
 pub enum BlogError {
     IoError(IoError),
-    NotFound
+    NotFound,
 }
 
 impl From<IoError> for BlogError {
@@ -22,9 +22,6 @@ impl From<IoError> for BlogError {
 
 pub type BlogResult<T> = Result<T, BlogError>;
 pub type GetBlogMockResponse = BlogResult<Json<BlogRuntimeMockResponse>>;
-pub type GetBlogResponse = BlogResult<Json<BlogRuntimeResponse>>;
-
-pub type GetAllBlogResponse = BlogResult<Json<Vec<BlogRuntimeMockResponse>>>;
 
 impl IntoResponse for BlogError {
     fn into_response(self) -> Response {

@@ -1,12 +1,11 @@
-use axum::Json;
 use serde::{Deserialize, Serialize};
 
 use crate::blog::{
-    blog_app::grpc_blog_thumbsup, blog_route::blog::blog_runtime_request::BlogUpdateComparision,
+    blog_app::{grpc_blog_thumbsdown, grpc_blog_thumbsup},
+    blog_route::blog::blog_runtime_request::BlogUpdateComparision,
 };
 
 use super::{
-    blog_app::return_mock,
     blog_response::BlogError,
     blog_route::blog::{
         BlogRuntimeRequest, BlogRuntimeResponse, BlogThumbsdownRequest, BlogThumbsupRequest,
@@ -116,17 +115,6 @@ impl BlogRuntimeMockResponse {
     }
 }
 
-impl BlogRuntimeResponse {
-    pub fn into_blog_reponse(self) -> BlogRuntimeMockResponse {
-        BlogRuntimeMockResponse {
-            blog_id: self.blog_id,
-            thumps_down: self.thumpsdown,
-            thumps_up: self.thumpsup,
-            who: self.who,
-        }
-    }
-}
-
 impl BlogRuntimeRequest {
     pub async fn update_into(self) -> Result<BlogRuntimeResponse, BlogError> {
         println!("\n update_into {:?}", &self);
@@ -134,27 +122,11 @@ impl BlogRuntimeRequest {
             Some(blog_update_comparision) => blog_update_comparision,
             None => Err("No update found").unwrap(),
         };
-
-        let mock = return_mock();
         match blog_update {
             BlogUpdateComparision::BlogThumbsdownRequest(req) => {
-                // Ok(Json(grpc_blog_thumbsup(req).await?))
-                Ok(BlogRuntimeResponse {
-                    blog_id: mock.clone().blog_id,
-                    thumpsdown: mock.clone().thumpsdown + req.thumps_down,
-                    thumpsup: mock.clone().thumpsup,
-                    who: req.who,
-                })
+                Ok(grpc_blog_thumbsdown(req).await?)
             }
-            BlogUpdateComparision::BlogThumbsupRequest(req) => {
-                Ok(grpc_blog_thumbsup(req).await?)
-            }
-            // BlogRuntimeResponse {
-            //     blog_id: mock.clone().blog_id,
-            //     thumpsdown: mock.clone().thumpsdown,
-            //     thumpsup: mock.clone().thumpsup + req.thumps_up,
-            //     who: req.who,
-            // },
+            BlogUpdateComparision::BlogThumbsupRequest(req) => Ok(grpc_blog_thumbsup(req).await?),
         }
     }
 }

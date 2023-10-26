@@ -3,9 +3,9 @@ use axum::{
     routing::{get, post},
 };
 use dotenv::dotenv;
-use std::{env, net::SocketAddr, path::Path, fs::File};
+use std::{env, net::SocketAddr};
 use tokio::join;
-use tower_http::cors::{Any, CorsLayer, AllowHeaders};
+use tower_http::cors::{AllowHeaders, Any, CorsLayer};
 
 use crate::blog::blog_route::{
     blog::blog_run_time_server::BlogRunTimeServer, get_blog_data, thumbs_down, thumbs_up,
@@ -15,7 +15,8 @@ use crate::blog::blog_route::{
 mod blog;
 
 pub async fn internal_server() {
-    let internal_port: String = env::var("INTERNAL_PORT").expect("INTERNAL_PORT variable should be set");
+    let internal_port: String =
+        env::var("INTERNAL_PORT").expect("INTERNAL_PORT variable should be set");
     let internal_addr: SocketAddr = format!("[::0]:{}", internal_port)
         .parse()
         .expect("Unable to parse internal address");
@@ -28,7 +29,7 @@ pub async fn internal_server() {
             Method::DELETE,
             Method::OPTIONS,
             Method::PUT,
-            Method::HEAD
+            Method::HEAD,
         ])
         .allow_headers(AllowHeaders::any())
         .allow_origin(Any);
