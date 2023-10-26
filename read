@@ -1,0 +1,18 @@
+1. Install rust:
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+2. Install Protobuff:
+    brew install protobuf
+
+2. Dependencies:
+    cargo add prost
+    cargo add tonic 
+    cargo add tokio --features macros,rt-multi-thread
+
+
+4. Build Dependencies:
+    cargo add tonic-build --build
+
+
+5. React gRPC Client:
+    https://daily.dev/blog/build-a-chat-app-using-grpc-and-reactjs

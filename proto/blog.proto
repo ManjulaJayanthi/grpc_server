@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package blog;
+
+service BlogRunTime {
+    rpc UpdateBlog(BlogRuntimeRequest) returns (BlogRuntimeResponse);
+}
+
+message BlogThumbsdownRequest {
+  string blog_id = 1;
+  int32 thumps_down = 2;
+  string who = 3;
+}
+
+message BlogThumbsupRequest {
+  string blog_id = 1;
+  int32 thumps_up = 2;
+  string who = 3;
+}
+
+message BlogRuntimeRequest {
+  oneof blog_update_comparision {
+    BlogThumbsupRequest blog_thumbsup_request = 1;
+    BlogThumbsdownRequest blog_thumbsdown_request = 2;
+  }
+}
+
+message BlogRuntimeResponse {
+  string blog_id = 1;
+  int32 thumpsdown = 2;
+  int32 thumpsup = 3;
+  string who = 4;
+}
