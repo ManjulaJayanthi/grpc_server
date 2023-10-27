@@ -4,6 +4,14 @@ package blog;
 
 service BlogRunTime {
     rpc UpdateBlog(BlogRuntimeRequest) returns (BlogRuntimeResponse);
+    rpc GetBlogg(GetBlogRequest) returns (GetBlogResponse);
+}
+
+message GetBlogRequest {
+}
+
+message GetBlogResponse {
+  string ok = 1;
 }
 
 message BlogThumbsdownRequest {

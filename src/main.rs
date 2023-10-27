@@ -5,7 +5,9 @@ use axum::{
 use dotenv::dotenv;
 use std::{env, net::SocketAddr};
 use tokio::join;
-use tower_http::cors::{AllowHeaders, Any, CorsLayer};
+use tonic::transport::Server;
+use tower_http::cors::{AllowHeaders, Any, CorsLayer, ExposeHeaders};
+use tracing_subscriber::FmtSubscriber;
 
 use crate::blog::blog_route::{
     blog::blog_run_time_server::BlogRunTimeServer, get_blog_data, thumbs_down, thumbs_up,
@@ -54,12 +56,32 @@ pub async fn grpc_server() {
         .parse()
         .expect("Unable to parse grpc address");
 
-    let blog_service = UpdateTheBlogService::default();
-    let grpc_routes = tonic::transport::Server::builder()
-        .add_service(BlogRunTimeServer::new(blog_service))
-        .into_router();
+    let subscriber = FmtSubscriber::new();
+    tracing::subscriber::set_global_default(subscriber).unwrap();
 
-    println!("\n gRPC Server running on {:?}", &grpc_addr);
+    let cors: CorsLayer = CorsLayer::new()
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PATCH,
+            Method::DELETE,
+            Method::OPTIONS,
+            Method::PUT,
+            Method::HEAD,
+        ])
+        .allow_headers(AllowHeaders::any())
+        .allow_origin(Any)
+        .expose_headers(ExposeHeaders::any());
+
+    let blog = UpdateTheBlogService::default();
+    let blog = BlogRunTimeServer::new(blog);
+    let blog_service = tonic_web::enable(blog);
+
+    let grpc_routes = Server::builder()
+        .accept_http1(true)
+        .add_service(blog_service)
+        .into_router()
+        .layer(cors);
 
     axum::Server::bind(&grpc_addr)
         .serve(grpc_routes.into_make_service())

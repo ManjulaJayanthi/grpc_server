@@ -1,7 +1,10 @@
 use axum::{extract::Path, Json};
 use tonic::{Request, Response, Status};
 
-use self::blog::{blog_run_time_server::BlogRunTime, BlogRuntimeRequest, BlogRuntimeResponse};
+use self::blog::{
+    blog_run_time_server::BlogRunTime, BlogRuntimeRequest, BlogRuntimeResponse, GetBlogRequest,
+    GetBlogResponse,
+};
 
 use super::{
     blog_app::{get_blog, write_blog_thumbsdown, write_blog_thumbsup},
@@ -26,6 +29,20 @@ impl BlogRunTime for UpdateTheBlogService {
         let blog_runtime_response = request.into_inner().update_into();
         Ok(Response::new(blog_runtime_response.await.unwrap()))
     }
+
+    async fn get_blogg(
+        &self,
+        _request: tonic::Request<GetBlogRequest>,
+    ) -> Result<Response<GetBlogResponse>, tonic::Status>
+    where
+        'life0: 'async_trait,
+        Self: 'async_trait,
+    {
+        println!("\n get_blogg");
+        Ok(Response::new(GetBlogResponse {
+            ok: "hi".to_string(),
+        }))
+    }
 }
 
 pub async fn get_blog_data(Path(blog): Path<String>) -> GetBlogMockResponse {
@@ -48,3 +65,6 @@ pub async fn thumbs_down(
     println!("\n thumbs_down handler");
     Ok(write_blog_thumbsdown(blog, request).await?)
 }
+
+
+
