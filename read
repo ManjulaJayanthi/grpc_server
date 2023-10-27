@@ -15,4 +15,5 @@
 
 
 5. React gRPC Client:
-    https://daily.dev/blog/build-a-chat-app-using-grpc-and-reactjs
+    1. https://daily.dev/blog/build-a-chat-app-using-grpc-and-reactjs
+    2. https://www.koyeb.com/tutorials/build-and-deploy-a-grpc-web-app-using-rust-tonic-and-react

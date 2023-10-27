@@ -4,14 +4,11 @@ package blog;
 
 service BlogRunTime {
     rpc UpdateBlog(BlogRuntimeRequest) returns (BlogRuntimeResponse);
-    rpc GetBlogg(GetBlogRequest) returns (GetBlogResponse);
+    rpc GetBlogg(GetBlogRequest) returns (BlogRuntimeResponse);
 }
 
 message GetBlogRequest {
-}
-
-message GetBlogResponse {
-  string ok = 1;
+  string blog_id = 1;
 }
 
 message BlogThumbsdownRequest {
@@ -35,7 +32,7 @@ message BlogRuntimeRequest {
 
 message BlogRuntimeResponse {
   string blog_id = 1;
-  int32 thumpsdown = 2;
-  int32 thumpsup = 3;
+  int32 thumbs_down = 2;
+  int32 thumbs_up = 3;
   string who = 4;
 }
